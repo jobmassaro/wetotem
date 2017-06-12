@@ -2,8 +2,158 @@
 
     use Models\Action;
 
+
+
     include('../inc/mysql.inc.php');
+
+$cfg['player_host'] = "10.0.0.2";
+$cfg['player_port'] = "8080";
+$cfg['player_pass'] = "sasa";
+
+
+function vlc($command, $win) 
+{
+    global $cfg;
+  
+  /*  $request  = 'GET /requests/playlist.xml?command=pl_play&id=6'. ' HTTP/1.1' . "\r\n";
+    $request .= 'Host: ' . $cfg['player_host'] . ':' . $cfg['player_port'] . "\r\n";
+    $request .= 'Connection: Close' . "\r\n";
+    $request .= 'Authorization: Basic ' . base64_encode(':' . $cfg['player_pass']) . "\r\n\r\n";
+
+
+  $request2  = 'GET /requests/status.xml?command=pl_loop'.' HTTP/1.1' . "\r\n";
+    $request2 .= 'Host: ' . $cfg['player_host'] . ':' . $cfg['player_port'] . "\r\n";
+    $request2 .= 'Connection: Close' . "\r\n";
+    $request2 .= 'Authorization: Basic ' . base64_encode(':' . $cfg['player_pass']) . "\r\n\r\n";
+*/
+
+    
+
+
+    
+    
+ 
+   
+
+
+    //@fwrite($soket, $request) or die();
+    if($win == 1 )
+    {
+		$request2  = 'GET /requests/status.xml?command=pl_play&id=10'.' HTTP/1.1' . "\r\n";
+		$request2 .= 'Host: ' . $cfg['player_host'] . ':' . $cfg['player_port'] . "\r\n";
+		$request2 .= 'Connection: Close' . "\r\n";
+		$request2 .= 'Authorization: Basic ' . base64_encode(':' . $cfg['player_pass']) . "\r\n\r\n";
+
+
+
+
+		 $soket2 = @fsockopen($cfg['player_host'], $cfg['player_port'], $error_no, $error_string, 1) or die();
+        @fwrite($soket2, $request2) or die();
+		  //$content2 = stream_get_contents($soket2);
+		 fclose($soket2);
+       
+        
+    }else if($win == 0)
+    {
+
+    	$request2  = 'GET /requests/status.xml?command=pl_play&id=9'.' HTTP/1.1' . "\r\n";
+		$request2 .= 'Host: ' . $cfg['player_host'] . ':' . $cfg['player_port'] . "\r\n";
+		$request2 .= 'Connection: Close' . "\r\n";
+		$request2 .= 'Authorization: Basic ' . base64_encode(':' . $cfg['player_pass']) . "\r\n\r\n";
+
+
+
+
+		 $soket2 = @fsockopen($cfg['player_host'], $cfg['player_port'], $error_no, $error_string, 1) or die();
+        @fwrite($soket2, $request2) or die();
+		  //$content2 = stream_get_contents($soket2);
+		 fclose($soket2);
+
+
+    }
+    
+    if($win ==10)
+	{
+
+		
+ 	   $request3  = 'GET /requests/status.xml?command=pl_play&id=8'.' HTTP/1.1' . "\r\n";
+    	$request3 .= 'Host: ' . $cfg['player_host'] . ':' . $cfg['player_port'] . "\r\n";
+    	$request3 .= 'Connection: Close' . "\r\n";
+    	$request3 .= 'Authorization: Basic ' . base64_encode(':' . $cfg['player_pass']) . "\r\n\r\n";
+
+    
+     $soket3 = @fsockopen($cfg['player_host'], $cfg['player_port'], $error_no, $error_string, 1) or die();
+
+
+		 @fwrite($soket3, $request3) or die();
+		   //$content3 = stream_get_contents($soket3);
+		    fclose($soket3);
+	}
+
+    
+
+
+    //content = stream_get_contents($soket);
+  
+  
+    
+     //$soket = @fsockopen($cfg['player_host'], $cfg['player_port'], $error_no, $error_string, 1) or die();
+
+    //$content = stream_get_contents($soket);
+    
+      
+    
+    
+    
+    //fclose($soket);
+   
+    //fclose($soket3);
 	
+    $temp = explode("\r\n\r\n", $content, 2);
+    if (isset($temp[1])) 
+	{
+        $header = $temp[0];
+        $content = $temp[1];
+    }
+    
+    return $content;
+}
+
+
+
+
+
+
+//echo("<pre>" . vlc2("pl_loop") . "</pre>");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	$view = '';
 	$credito = 0;
 	$textPremi = '';
@@ -11,12 +161,9 @@
 	$today 	= date('Y-m-d');
 	$ora	= date('H:i:s');
 
-
     if($_SERVER['REQUEST_METHOD'] == 'GET')
 	{
 		$cliente = $_GET['cliente'];
-		
-		
 		if ($result = $dbc->query("SELECT * FROM ".newgiocata." WHERE cliente = '$cliente' AND `risultato`='VINTO' AND `ritirato` = 'F'")) 
 		    if ($obj = $result->fetch_object()) 
 			{
@@ -144,7 +291,7 @@
 			$incremento = ($probFinale - $probIniziale) / ($fasceRange);
 			$prob = intval(($probIniziale + ($incremento * $fasceTrascorsi))*$premi);
 			$probpercentuale = $probIniziale + ($incremento * $fasceTrascorsi);
-			$random = mt_rand(1,100);
+			$random = mt_rand(1,5);
 			if ((($ora->diff($fine)->h * 60) + $ora->diff($fine)->i) < 30) $prob = 50*$premi;
 			if ($random <= $prob) $vinto = true; else $vinto = false;
 			// Estrazione
@@ -252,39 +399,11 @@
 	switch ($view)
 	{
 		case 'WIN': 
-			/*$body = 
-			"
-			<body>
-				<p id='totemCrediti' class='label'>Crediti: <b>$credito</b></p>
-				<p id='totemUser' class='label'>Ciao <b>$cliente</b></p>
-				<div id='totemPremi'>$textPremi</div>
-				<video id='win' width='100%' autoplay>
-					<source src='dist/videos/test.mp4' type='video/mp4'>
-					Il tuo browser non supporta i video HTML5.
-				</video>
 
-				<script> document.getElementById('win').onended = function(e) { refresh(); }; </script>
-			</body>
-			";*/
-			$body = 
-			"
-			<body>
-				<p id='totemCrediti' class='label'>Crediti: <b>$credito</b></p>
-				<p id='totemUser' class='label'>Ciao <b>$cliente</b></p>
-				<div id='totemPremi'>$textPremi</div>
-				<video id='win' width='100%' autoplay>
-					<source src='../dist/videos/win.mp4' type='video/mp4'>
-					Il tuo browser non supporta i video HTML5.
-				</video>
-
-				<script> 
-				setTimeout(function () {
-   					window.location.href = '../';
-					}, 10000) </script>
-			</body>";
-
-			break;
-		case 'LOSE': 
+		if($premioNome==='GIFT CARD 50')
+		{
+			echo("<pre>" . vlc("pl_loop",1) . "</pre>");
+			
 			$body = 
 			"
 			<body class='container'>
@@ -292,14 +411,62 @@
 				<p id='totemUser' class='label'>Ciao <b>$cliente</b></p>
 				<div id='totemPremi'>$textPremi</div>
 				<video id='win' width='100%' autoplay>
-					<source src='../dist/videos/lose.mp4' type='video/mp4'>
+					<source src='http://10.0.0.10/totem/media/win.mp4' type='video/mp4'>
 					Il tuo browser non supporta i video HTML5.
 				</video>
+				
 				<script> 
 				setTimeout(function () {
    					window.location.href = '../';
 					}, 10000) </script>
 			</body>	";
+
+		}else{
+			echo("<pre>" . vlc("pl_loop",1) . "</pre>");
+		
+		$body = 
+			"
+			<body class='container'>
+				<p id='totemCrediti' class='label'>Crediti: <b>$credito</b></p>
+				<p id='totemUser' class='label'>Ciao <b>$cliente</b></p>
+				<div id='totemPremi'>$textPremi</div>
+				<video id='win' width='100%' autoplay>
+					<source src='http://10.0.0.10/totem/media/win.mp4' type='video/mp4'>
+					Il tuo browser non supporta i video HTML5.
+				</video>
+				
+				<script> 
+				setTimeout(function () {
+   					window.location.href = '../';
+					}, 10000) </script>
+			</body>	";
+		}
+					
+			break;
+		case 'LOSE': 
+
+		
+		echo("<pre>" . vlc("pl_loop",0) . "</pre>");
+		
+			
+		$body = 
+			"
+			<body class='container'>
+				<p id='totemCrediti' class='label'>Crediti: <b>$credito</b></p>
+				<p id='totemUser' class='label'>Ciao <b>$cliente</b></p>
+				<div id='totemPremi'>$textPremi</div>
+				<video id='win' width='100%' autoplay>
+					<source src='http://10.0.0.10/totem/media/lose.mp4' type='video/mp4'>
+					Il tuo browser non supporta i video HTML5.
+				</video>
+				
+				<script> 
+				setTimeout(function () {
+   					window.location.href = '../';
+					}, 10000) </script>
+			</body>	";
+			
+		
 			break;
 		case 'END': 
 			header('location:../' );

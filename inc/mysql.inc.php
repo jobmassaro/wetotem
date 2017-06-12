@@ -14,9 +14,9 @@ DEFINE ('DB_NAME', 'Sql1069287_1');
 */
 
 DEFINE ('DB_USER', 'root');
-DEFINE ('DB_PASSWORD', 'sabmas01');
+DEFINE ('DB_PASSWORD', 'worldevent01');
 DEFINE ('DB_HOST', 'localhost');
-DEFINE ('DB_NAME', 'beta');
+DEFINE ('DB_NAME', 'we');
 
 define('BASE_URL', 'inc/');
 define('PATH_GLOBAL', 'gtotem/');
